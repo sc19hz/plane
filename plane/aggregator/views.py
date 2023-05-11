@@ -122,14 +122,13 @@ def book_flight(request):
         if response.status_code == 201:
             order_id = response.json().get('order_id', None)
             if order_id:
-                response_json = JsonResponse({"order_id": order_id})
-                print("Response JSON:", response_json.content)  # Print response content
-                return response_json
+                payment_url = reverse('payment', args=[order_id])
+                return JsonResponse({"redirect_url": payment_url})
             else:
                 return JsonResponse({"error": "Error in booking flight."})
         else:
             return JsonResponse({"error": f"Error in booking flight. Status code: {response.status_code}"})
-    return JsonResponse({"error": "Invalid request method."})
+
 def cancel_order(request, order_id):
     if request.method == 'POST':
         api_url = 'http://sc192jl.pythonanywhere.com/api/AirlineSichuan/cancelbooking'
@@ -141,3 +140,22 @@ def cancel_order(request, order_id):
             return JsonResponse({'status': 'success'})
         else:
             return JsonResponse({'status': 'error', 'message': 'Failed to cancel order'})
+def payment(request, order_id):
+    return render(request, 'payment.html', {'order_id': order_id})
+def process_payment(request):
+    if request.method == 'POST':
+        payment_provider = request.POST['paymentprovider']
+        order_id = request.POST['order_id']
+        api_url = 'http://sc192jl.pythonanywhere.com/api/AirlineSichuan/paymentMethod'
+        api_data = {
+            "payment_provider": payment_provider,
+            "order_id": order_id,
+        }
+
+        response = requests.post(api_url, json=api_data)
+
+        if response.status_code == 200:
+            return JsonResponse({"success": "Payment method selected successfully."})
+        else:
+            return JsonResponse({"error": f"Error in selecting payment method. Status code: {response.status_code}"})
+    return JsonResponse({"error": "Invalid request method."})

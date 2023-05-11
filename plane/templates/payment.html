@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>Select Payment Method</h2>
+    <form method="post" action="{% url 'process_payment' %}">
+      {% csrf_token %}
+      <input type="hidden" name="paymentprovider" value="WS">
+      <input type="hidden" name="order_id" value="{{ order_id }}">
+      <button type="submit">WS</button>
+    </form>
+
+    <form method="post" action="{% url 'process_payment' %}">
+      {% csrf_token %}
+      <input type="hidden" name="paymentprovider" value="nnr">
+      <input type="hidden" name="order_id" value="{{ order_id }}">
+      <button type="submit">nnr</button>
+    </form>
+
+    <form method="post" action="{% url 'process_payment' %}">
+      {% csrf_token %}
+      <input type="hidden" name="paymentprovider" value="weha">
+      <input type="hidden" name="order_id" value="{{ order_id }}">
+      <button type="submit">weha</button>
+    </form>
+  </div>
+{% endblock %}

@@ -23,7 +23,7 @@
         document.getElementById("spare_seats").textContent = selectedFlight.spare_seats;
       }
     };
- function bookFlight() {
+function bookFlight() {
   const selectedFlight = JSON.parse(localStorage.getItem("selectedFlight"));
   const flight_id = selectedFlight.flight_id;
 
@@ -45,12 +45,17 @@
       }
     })
     .then((data) => {
-      console.log("Order ID: ", data.order_id);
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else if (data.error) {
+        console.error("Error:", data.error);
+      }
     })
     .catch((error) => {
       console.error("Error:", error);
     });
 }
+
 
 
 
