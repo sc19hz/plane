@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    {% block extra_js %}
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock %}
+    <script>
+    window.onload = function() {
+      const selectedFlight = JSON.parse(localStorage.getItem("selectedFlight"));
+      if (selectedFlight) {
+        document.getElementById("air_name").textContent = selectedFlight.air_name;
+        document.getElementById("departure_time").textContent = selectedFlight.departure_time;
+        document.getElementById("arrival_time").textContent = selectedFlight.arrival_time;
+        document.getElementById("departure_airport").textContent = selectedFlight.departure_airport;
+        document.getElementById("destin_airport").textContent = selectedFlight.destin_airport;
+        document.getElementById("departure_place").textContent = selectedFlight.departure_place;
+        document.getElementById("destin_place").textContent = selectedFlight.destin_place;
+        document.getElementById("duration").textContent = selectedFlight.duration;
+        document.getElementById("flight_num").textContent = selectedFlight.flight_num;
+        document.getElementById("aircraft_type").textContent = selectedFlight.aircraft_type;
+        document.getElementById("seat_price").textContent = selectedFlight.seat_price;
+        document.getElementById("spare_seats").textContent = selectedFlight.spare_seats;
+      }
+    };
+ function bookFlight() {
+  const selectedFlight = JSON.parse(localStorage.getItem("selectedFlight"));
+  const flight_id = selectedFlight.flight_id;
+
+  fetch("/book_flight/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken"),
+    },
+    body: JSON.stringify({
+      flight_id: flight_id,
+    }),
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Error in booking flight.");
+      }
+    })
+    .then((data) => {
+      console.log("Order ID: ", data.order_id);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
+
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split("; ");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+  </script>
+  <div class="container">
+    <h2>Flight Detail</h2>
+    <div class="flight-detail">
+      <a href="javascript:history.back()">Return to previous page</a>
+      <p><strong>Airline:</strong> <span id="air_name"></span></p>
+      <p><strong>Departure Time:</strong> <span id="departure_time"></span></p>
+      <p><strong>Arrival Time:</strong> <span id="arrival_time"></span></p>
+      <p><strong>Departure Airport:</strong> <span id="departure_airport"></span></p>
+      <p><strong>Destination Airport:</strong> <span id="destin_airport"></span></p>
+      <p><strong>Departure Place:</strong> <span id="departure_place"></span></p>
+      <p><strong>Destination Place:</strong> <span id="destin_place"></span></p>
+      <p><strong>Duration:</strong> <span id="duration"></span></p>
+      <p><strong>Flight Number:</strong> <span id="flight_num"></span></p>
+      <p><strong>Aircraft Type:</strong> <span id="aircraft_type"></span></p>
+      <p><strong>Seat Price:</strong> <span id="seat_price"></span></p>
+      <p><strong>Available Seats:</strong> <span id="spare_seats"></span></p>
+    </div>
+  <button onclick="bookFlight()">Book</button>
+
+  </div>
+{% endblock %}
+
+
+
+

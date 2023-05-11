@@ -1,0 +1,34 @@
+<!-- order_detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="d-flex justify-content-end">
+    <i class="fas fa-trash-alt" id="delete-order" style="cursor: pointer;"></i>
+  </div>
+  <p><a href="{% url 'order' %}">&larr; Back to Orders</a></p>
+
+  <h2>{{ order.air_name }}</h2>
+  <!-- Add more order details here -->
+  <p>Flight Number: {{ order.flight_num }}</p>
+  <p>Aircraft Type: {{ order.aircraft_type }}</p>
+  <p>Departure Place: {{ order.departure_place }}</p>
+  <p>Departure Airport: {{ order.departure_airport }}</p>
+  <p>Departure Time: {{ order.departure_time }}</p>
+  <p>Destination Place: {{ order.destin_place }}</p>
+  <p>Destination Airport: {{ order.destin_airport }}</p>
+  <p>Arrival Time: {{ order.arrival_time }}</p>
+  <p>Duration: {{ order.duration }}</p>
+  <p>Seat Price: {{ order.seat_price }}</p>
+  <p>Spare Seats: {{ order.spare_seats }}</p>
+  <p>Order ID: {{ order.order_id }}</p>
+  <p>Payer ID: {{ order.payer_id }}</p>
+  <p>Payer Name: {{ order.payer_name }}</p>
+  <p>Payment Provider: {{ order.payment_provider }}</p>
+  <p>Secret Key: {{ order.secret_key }}</p>
+  <p>State: {{ order.state }}</p>
+</div>
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock %}
