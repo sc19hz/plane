@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 import requests
 from django.contrib import messages
 import json
-
+from urllib.parse import unquote
 
 def register(request):
     if request.method == 'POST':
@@ -86,7 +86,7 @@ def order(request):
     print(response)
     if response.status_code == 200:
         orders = response.json()['data']
-
+        request.session['orders'] = orders
         return render(request, 'order.html', {'orders': orders})
     else:
         messages.error(request, 'There was an issue retrieving your orders. Please try again later.')
@@ -94,16 +94,15 @@ def order(request):
 
 @login_required
 def order_detail(request, order_id):
-    api_url = 'http://sc192jl.pythonanywhere.com/api/Airline/order/{}'.format(order_id)
-    json_data = {
-        "payer_name": request.user.real_name,
-        "payer_id": request.user.user_id
-    }
-    response = requests.post(api_url, json=json_data)
+    orders = request.session.get('orders', [])
+    order = None
 
-    if response.status_code == 200:
-        order = response.json()
-        print(order)
+    for o in orders:
+        if o['order_id'] == order_id:
+            order = o
+            break
+
+    if order:
         return render(request, 'order_detail.html', {'order': order})
     else:
         return HttpResponseNotFound('Order not found')
@@ -196,6 +195,7 @@ def login_payment(request, order_id):
         else:
             return JsonResponse({"error": f"Error in login payment. Status code: {response.status_code}"})
     else:
+        error_message = request.session.pop('error_message', None)
         return render(request, 'login_payment.html', {'order_id': order_id})
 
 def request_key(request, order_id):
@@ -212,22 +212,26 @@ def request_key(request, order_id):
             response = requests.post(api_url, json=api_data)
 
             if response.status_code == 200:
-
                 secret_key = response.json().get('msg', None)
                 print(f'key:{secret_key}')
-                if secret_key:
 
+                if secret_key and "no" not in secret_key.lower():
                     request.session['secret_key'] = secret_key
                     pay_url = reverse('pay', args=[order_id])
                     return HttpResponseRedirect(pay_url)
                 else:
-                    return JsonResponse({"error": "Error in request key."})
+                    request.session['error_message'] = f"Error in requesting key: {secret_key}"
+                    messages.error(request, "Error in requesting key.")
+                    return HttpResponseRedirect(reverse('login_payment', args=[order_id]))
             else:
-                return JsonResponse({"error": f"Error in request key. Status code: {response.status_code}"})
+                messages.error(request, f"Error in requesting key. Status code: {response.status_code}")
+                return HttpResponseRedirect(reverse('login_payment', args=[order_id]))
         else:
-            return JsonResponse({"error": "User ID not found in session."})
+            messages.error(request, "User ID not found in session.")
+            return HttpResponseRedirect(reverse('login_payment', args=[order_id]))
     else:
-        return JsonResponse({"error": "Invalid request method."})
+        messages.error(request, "Invalid request method.")
+        return HttpResponseRedirect(reverse('login_payment', args=[order_id]))
 
 @login_required
 def pay(request, order_id):
@@ -246,18 +250,13 @@ def pay(request, order_id):
             state = response.json().get('state', None)
             if state:
                 # Show a success message and redirect to the index page
-                messages.success(request, "Your payment has been finished.")
-
-                return redirect('index')
+                return render(request, 'payment_success.html')
             else:
                 messages.error(request, "Error in processing payment.")
-
                 return redirect('index')
         else:
             messages.error(request, f"Error in processing payment. Status code: {response.status_code}")
-            print("err")
             return redirect('index')
     else:
         messages.error(request, "Secret key not found in session.")
-
         return redirect('index')

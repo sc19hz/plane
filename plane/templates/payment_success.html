@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+    window.onload = function() {
+        const message = "Your payment has been finished.";
+        if (confirm(message)) {
+            window.location.href = "{% url 'index' %}";
+        } else {
+            window.location.href = "{% url 'index' %}";
+        }
+    }
+</script>
+{% endblock %}
