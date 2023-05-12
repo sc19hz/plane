@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>Select Payment Method</h2>
+    <form id="payment-form" method="post" action="/process_payment/">
+      {% csrf_token %}
+      <input type="hidden" id="order_id" name="order_id" value="{{ order_id }}">
+      <input type="hidden" id="paymentprovider" name="paymentprovider">
+      <button type="button" onclick="selectPayment('WS')">WS</button>
+      <button type="button" onclick="selectPayment('nnr')">nnr</button>
+      <button type="button" onclick="selectPayment('weha')">weha</button>
+    </form>
+  </div>
+  <script>
+    function selectPayment(provider) {
+      document.getElementById('paymentprovider').value = provider;
+      document.getElementById('payment-form').submit();
+    }
+  </script>
+{% endblock %}

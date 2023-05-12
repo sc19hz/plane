@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="container">
+    {% if user.is_authenticated %}
+        <div class="welcome-text">
+            <p>Hello, {{ user.real_name }}!</p>
+        </div>
+        <nav class="top-right-nav">
+            <a href="{% url 'order' %}">My Orders</a>
+        </nav>
+        <div class="nav-buttons">
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+        <form id="flight-search-form" class="flight-search-form">
+            <div class="form-group">
+                <label for="departure_place">Departure Place:</label>
+                <input type="text" class="form-control" id="departure_place" name="departure_place"
+                       placeholder="Enter departure place" required>
+            </div>
+            <div class="form-group">
+                <label for="destin_place">Destination Place:</label>
+                <input type="text" class="form-control" id="destin_place" name="destin_place"
+                       placeholder="Enter destination place" required>
+            </div>
+            <div class="form-group">
+                <label for="departure_time">Departure Date:</label>
+                <input type="date" class="form-control" id="departure_time" name="departure_time" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Search Flights</button>
+        </form>
+
+    {% else %}
+        <h1>Welcome to our Flight Aggregator!</h1>
+        <p>Please <a href="{% url 'login' %}">log in</a> to search for flights.</p>
+    {% endif %}
+    <div id="flight-results" class="flight-results">
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Air Name</th>
+                <th scope="col">Departure Time</th>
+                <th scope="col">Arrival Time</th>
+            </tr>
+            </thead>
+            <tbody id="flight-results-tbody">
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
+{% if user.is_authenticated %}
+    <script src="{% static 'js/main.js' %}"></script>
+{% endif %}
+<style>
+    .table-hover tbody tr:hover {
+  background-color: #f5f5f5;
+}
+</style>

@@ -1,0 +1,21 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+   <div class="d-flex justify-content-between align-items-center">
+    <h2>Your Orders</h2>
+    <a href="{% url 'index' %}" class="btn btn-primary">Back to Homepage</a>
+  </div>
+  <ul>
+    {% for order in orders %}
+      <li>
+        <a href="{% url 'order_detail' order_id=order.order_id %}">
+          {{ order.air_name }} | {{ order.departure_time }} | {{ order.arrival_time }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
