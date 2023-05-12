@@ -40,7 +40,7 @@ def user_login(request):
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            # 获取并存储real_name到session中
+
             real_name = user.real_name
             user_id=user.user_id
             request.session['real_name'] = real_name
@@ -70,7 +70,7 @@ def find_flight(request):
     else:
         return JsonResponse({'status': response.status_code})
 def flight_detail(request, flight_id):
-    # Fetch flight data based on flight_id, e.g., from an external API or your database
+    # Fetch flight data based on flight_id
     flight_data = {} # Replace with actual flight data
     return render(request, "detail.html", {"flight": flight_data})
 @login_required
