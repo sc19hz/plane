@@ -35,7 +35,18 @@
     <h1>Welcome to our Flight Aggregator!</h1>
     <p>Please <a href="{% url 'login' %}">log in</a> to search for flights.</p>
     {% endif %}
-<div id="flight-results" class="flight-results"></div>
+<div id="flight-results" class="flight-results">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">Air Name</th>
+        <th scope="col">Departure Time</th>
+        <th scope="col">Arrival Time</th>
+      </tr>
+    </thead>
+    <tbody id="flight-results-tbody">
+    </tbody>
+  </table>
 </div>
 {% endblock %}
 

@@ -1,10 +1,10 @@
+// main.js
 function renderFlightData(flight) {
-  const flightInfo = document.createElement("div");
-  flightInfo.classList.add("flight-info");
+  const flightInfo = document.createElement("tr");
   flightInfo.innerHTML = `
-    <h4>${flight.air_name}</h4>
-    <p>Departure Time: ${flight.departure_time}</p>
-    <p>Arrival Time: ${flight.arrival_time}</p>
+    <td>${flight.air_name}</td>
+    <td>${flight.departure_time}</td>
+    <td>${flight.arrival_time}</td>
   `;
   flightInfo.dataset.flight = JSON.stringify(flight);
   flightInfo.addEventListener("click", function () {
@@ -37,23 +37,23 @@ document.addEventListener("DOMContentLoaded", function () {
             fetch(`/find_flight?${queryParams.toString()}`)
                 .then(response => response.json())
 .then(data => {
-    console.log('Processed API response:', data);
-    if (data.status === 200) {
-        const flightResults = document.getElementById('flight-results');
-        flightResults.innerHTML = ''; // 清空之前的搜索结果
-        if (data.data && data.data.length > 0) {
-            data.data.forEach(flight => {
-                flightResults.appendChild(renderFlightData(flight));
-            });
-        } else {
-            flightResults.innerHTML = '<p>No flights found.</p>';
-        }
-
-    } else if (data.status === 503) {
-        alert('Flight search failed.');
+  console.log('Processed API response:', data);
+  if (data.status === 200) {
+    const flightResultsTbody = document.getElementById('flight-results-tbody');
+    flightResultsTbody.innerHTML = ''; // 清空之前的搜索结果
+    if (data.data && data.data.length > 0) {
+      data.data.forEach(flight => {
+        flightResultsTbody.appendChild(renderFlightData(flight));
+      });
     } else {
-        alert('Unexpected error occurred.');
+      flightResultsTbody.innerHTML = '<tr><td colspan="3">No flights found.</td></tr>';
     }
+
+  } else if (data.status === 503) {
+    alert('Flight search failed.');
+  } else {
+    alert('Unexpected error occurred.');
+  }
 })
 
     .catch(error => {
@@ -99,4 +99,3 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
