@@ -10,6 +10,13 @@ from django.contrib import messages
 import json
 from urllib.parse import unquote
 
+UD="https://ccty.pythonanywhere.com/Payment_WS/signin/"
+UL1="https://ccty.pythonanywhere.com/Payment_WS/"
+UL2="https://sc192yz.pythonanywhere.com/Payment_nnr/"
+UL3="http://sc19yx2.pythonanywhere.com/Payment_weha/"
+UL=UL1
+
+
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -159,7 +166,13 @@ def process_payment(request):
             "payment_provider": payment_provider,
             "order_id": order_id,
         }
-
+        print(f'paymentprovider:{payment_provider}')
+        if(payment_provider=="WS"):
+            UL=UL1
+        elif(payment_provider=="nnr"):
+            UL=UL2
+        elif(payment_provider=="weha"):
+            UL=UL3
         response = requests.post(api_url, json=api_data)
 
         if response.status_code == 200:
@@ -175,7 +188,8 @@ def login_payment(request, order_id):
         password = request.POST['password']
 
         # Call the external API with the required data
-        api_url = 'https://ccty.pythonanywhere.com/Payment_WS/signin/'
+        # api_url = 'https://ccty.pythonanywhere.com/Payment_WS/signin/'
+        api_url =  UL+"signin/"
         api_data = {
             'username': username,
             'password': password,
@@ -203,7 +217,8 @@ def request_key(request, order_id):
         user_id = request.session.get('user_id', None)
         if user_id:
             # Call the external API with the required data
-            api_url = 'https://ccty.pythonanywhere.com/Payment_WS/Payment_order/'
+            # api_url = 'https://ccty.pythonanywhere.com/Payment_WS/Payment_order/'
+            api_url= UL+"Payment_order/"
             api_data = {
                 'uid': user_id,
                 'Airline_order': order_id,
