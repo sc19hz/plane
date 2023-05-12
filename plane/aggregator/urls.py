@@ -14,4 +14,7 @@ urlpatterns = [
     path('book_flight/', views.book_flight, name='book_flight'),
     path('payment/<int:order_id>/', views.payment, name='payment'),
     path('process_payment/', views.process_payment, name='process_payment'),
+    path('payment/<int:order_id>/login_payment/', views.login_payment, name='login_payment'),
+    path('payment/<int:order_id>/requestkey/', views.request_key, name='request_key'),
+    path('payment/<int:order_id>/pay/', views.pay, name='pay'),
 ]

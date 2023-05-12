@@ -66,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Your existing code goes here
 
     const cancelOrderBtn = document.getElementById('cancel-order-btn');
     if (cancelOrderBtn) {
